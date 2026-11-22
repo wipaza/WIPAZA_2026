@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#e9f3ee">
+<title>Ruta de Letras · Un viaje de palabras</title>
+<style>
+:root{--tinta:#233e42;--suave:#647c7e;--papel:#fbfcf7;--vidrio:#ffffffdc;--acento:#427d73;--oro:#e4ab43;--sombra:0 14px 40px #193a3a25;--escala:1;font-family:ui-rounded,"Trebuchet MS",Verdana,sans-serif;color:var(--tinta)}
+*{box-sizing:border-box}body{margin:0;min-width:360px;background:#e9f3ee;font-size:calc(15px * var(--escala))}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid #eaaa38;outline-offset:3px}.oculto{display:none!important}
+#paisaje{position:fixed;inset:0;z-index:-1;overflow:hidden}#paisaje svg{height:100%;width:100%;display:block}#velo{position:absolute;inset:0;background:linear-gradient(180deg,#ffffff33,#fff9 55%,#e6f3ecad)}
+.aplicacion{max-width:1220px;min-height:100dvh;margin:auto;padding:12px clamp(12px,3vw,30px) 24px;display:flex;flex-direction:column;gap:12px}
+.cabecera{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.marca{display:flex;align-items:center;gap:9px}.logotipo{font-size:28px;background:#fff9;border:1px solid #fff;border-radius:18px;padding:7px}.marca h1{font-size:clamp(20px,3vw,27px);line-height:1;margin:0}.marca small{display:block;color:#425b5f;margin-top:4px;font-size:12px}.acciones{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.pastilla,.boton{border:1px solid #ffffffa9;background:#fffc;border-radius:16px;color:var(--tinta);padding:10px 13px;box-shadow:0 3px 9px #25472c12;font-weight:700}.pastilla{white-space:nowrap}.boton:hover,.pastilla:hover{filter:brightness(.96)}.boton:disabled{opacity:.4;cursor:not-allowed}.primario{background:var(--acento);color:#fff;border-color:var(--acento)}
+.encabezado-nivel{display:flex;align-items:center;justify-content:space-between;gap:14px;background:var(--vidrio);padding:12px 16px;border-radius:20px;box-shadow:0 4px 18px #23492c10}.mundo h2{margin:0 0 4px;font-size:clamp(16px,2.5vw,23px)}.mundo p{margin:0;color:var(--suave);font-size:13px}.avance{width:min(220px,36vw)}.avance-datos{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:6px}.barra{height:11px;background:#d6e6de;border-radius:99px;overflow:hidden}.relleno{height:100%;background:linear-gradient(90deg,#77bca4,#408777);width:0%;transition:width .5s}
+.juego{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(315px,.8fr);gap:16px;flex:1;min-height:0}.panel{background:var(--vidrio);border:1px solid #fff8;border-radius:26px;box-shadow:var(--sombra);padding:14px;min-width:0}.panel-crucigrama{display:flex;flex-direction:column;min-height:500px}.panel-superior{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.panel h3{margin:0;font-size:17px}.etiqueta{color:var(--suave);font-size:12px;font-weight:700}.crucigrama-contenedor{flex:1;display:flex;justify-content:center;align-items:center;min-height:270px;overflow:hidden;padding:12px 0}.cuadricula{display:grid;gap:clamp(3px,.55vw,6px);width:max-content;max-width:100%;touch-action:manipulation}.casilla{width:var(--lado);height:var(--lado);border-radius:clamp(5px,.7vw,11px);background:#fff;border:2px solid #92b6a3;display:flex;align-items:center;justify-content:center;font-size:calc(var(--lado) * .57 * var(--escala));font-weight:900;position:relative;color:#244c42;box-shadow:0 3px 0 #bdd6c8;transition:background .2s,transform .2s}.casilla.vacia{background:transparent;border:0;box-shadow:none;pointer-events:none}.casilla.descubierta{background:#d6f3df;border-color:#51a385}.casilla.pista{background:#fff0c0;border-color:#d7a841}.casilla.marcada{animation:destacar .75s ease 2}.casilla.elegible{outline:3px dashed #d49b37;cursor:crosshair}.casilla .numero{position:absolute;top:2px;left:3px;font-size:9px;color:#6a8074;font-weight:700}.bajo-tablero{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}.mensaje{min-height:38px;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.4;color:#335f5d;font-weight:700}.contadores{font-size:13px;color:#536b65}
+.panel-rueda{display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:8px}.indicaciones{text-align:center;font-size:13px;color:var(--suave);margin:0}.burbuja{min-height:46px;min-width:130px;max-width:100%;border-radius:20px;background:#fff;color:#285a52;box-shadow:0 5px 13px #143d3218;display:flex;align-items:center;justify-content:center;padding:8px 20px;font-weight:900;letter-spacing:.12em;font-size:calc(22px * var(--escala));text-align:center}.burbuja.error{animation:sacudir .35s}.burbuja.brillo{animation:destello .65s}.rueda-marco{position:relative;width:min(100%,340px);aspect-ratio:1;touch-action:none;user-select:none;-webkit-user-select:none}.rueda-marco svg{width:100%;height:100%;overflow:visible;touch-action:none}.herramientas{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.herramientas .boton{min-height:60px;padding:7px 4px;font-size:calc(12px * var(--escala));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}.simbolo{font-size:23px}.teclado{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px;width:100%}.teclado input{min-width:0;flex:1 1 145px;border:2px solid #b9d3c4;border-radius:13px;padding:10px 12px;background:white;text-transform:uppercase;letter-spacing:.07em;color:#294f45}.teclado button{flex:0 0 auto}.ayuda-teclado{font-size:11px;color:#536e6c;text-align:center}
+.pie{text-align:center;font-size:12px;color:#456260}.cortina{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;background:#16362f80;padding:14px;backdrop-filter:blur(5px)}.dialogo{position:relative;width:min(100%,460px);max-height:90dvh;overflow:auto;border-radius:27px;background:#fffdf8;padding:24px;box-shadow:0 22px 70px #142d3670;text-align:center}.dialogo h2{margin:6px 0 10px;font-size:25px}.dialogo p{line-height:1.55;color:#536b67}.dialogo .cerrar{position:absolute;top:12px;right:12px;border:0;background:#eaf2ed;border-radius:50%;width:34px;height:34px}.fila-ajuste{display:flex;justify-content:space-between;gap:12px;text-align:left;padding:12px 2px;border-bottom:1px solid #edf1eb}.fila-ajuste input{width:22px;height:22px;accent-color:#468a77}.galeria{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.carta{border-radius:15px;background:#e8f3ed;padding:7px}.carta svg{width:100%;height:86px;border-radius:9px}.carta strong{font-size:12px}.carta.bloqueada{filter:grayscale(.9);opacity:.55}.regalo-ruleta{font-size:58px;display:inline-block;margin:5px;transition:transform 2.2s cubic-bezier(.12,.78,.12,1)}.premio{font-size:26px;font-weight:900;color:#a4751c}.confeti{pointer-events:none;position:fixed;z-index:20;inset:0;overflow:hidden}.trozo{position:absolute;top:-20px;width:10px;height:18px;animation:caer 2.3s linear forwards}.voladora{position:fixed;z-index:15;pointer-events:none;border-radius:50%;background:#e6fff2;box-shadow:0 3px 9px #0003;padding:5px 10px;font-weight:900;color:#356c56}.nota{font-size:12px}.botones-dialogo{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+@keyframes sacudir{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-4px)}}@keyframes destacar{50%{transform:scale(1.15);box-shadow:0 0 0 5px #f1c257}}@keyframes destello{45%{transform:scale(1.1);background:#fff1ab}}@keyframes caer{to{transform:translateY(110vh) rotate(700deg);opacity:0}}
+@media(max-width:760px){.aplicacion{gap:9px;padding:9px 9px 14px}.juego{display:flex;flex-direction:column;gap:9px}.panel{padding:11px;border-radius:19px}.panel-crucigrama{min-height:0}.crucigrama-contenedor{min-height:205px;padding:8px 0}.panel-rueda{gap:4px}.rueda-marco{width:min(76vw,270px)}.herramientas .boton{min-height:47px}.encabezado-nivel{padding:9px 12px}.cabecera{align-items:flex-start}.marca h1{font-size:21px}.acciones{justify-content:flex-end}.pastilla{padding:8px 10px}.burbuja{min-height:37px;font-size:19px}.pie{display:none}}@media(max-height:690px) and (min-width:761px){.panel-crucigrama{min-height:390px}.rueda-marco{width:min(29vw,285px)}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+.reinicio-barra{display:flex;justify-content:flex-end;margin:9px 0 0}.reinicio-barra .boton{font-size:13px;padding:8px 13px;background:#fff5e9;color:#734e34;border:1px solid #d8b49a}.reinicio-barra .boton:focus-visible{outline:3px solid #325f5b;outline-offset:3px}
+</style>
+</head>
+<body>
+<div id="paisaje" aria-hidden="true"><div id="velo"></div></div>
+<main class="aplicacion">
+<header class="cabecera"><div class="marca"><span class="logotipo" aria-hidden="true">🌿</span><div><h1>Ruta de Letras</h1><small>Un viaje tranquilo entre palabras</small></div></div><nav class="acciones" aria-label="Opciones"><button class="pastilla" id="gemas" aria-label="Ver gemas y regalos">💎 0</button><button class="pastilla" id="regalo" aria-label="Abrir regalo diario">🎁 Regalo</button><button class="pastilla" id="galeria" aria-label="Abrir galería de fondos">🖼️ Galería</button><button class="pastilla" id="ajustes" aria-label="Abrir ajustes">⚙️ Ajustes</button></nav></header>
+<section class="encabezado-nivel" aria-label="Progreso del viaje"><div class="mundo"><h2 id="tituloNivel">Preparando el camino…</h2><p id="datosNivel"></p></div><div class="avance"><div class="avance-datos"><span id="avanceNombre">Mundo</span><span id="avanceTexto">0/20</span></div><div class="barra" role="progressbar" aria-label="Progreso del mundo" aria-valuemin="0" aria-valuemax="20" aria-valuenow="0" id="barraProgreso"><div class="relleno" id="progreso"></div></div></div></section>
+<section class="juego" aria-label="Área de juego"><section class="panel panel-crucigrama" aria-label="Crucigrama"><div class="panel-superior"><h3>El mapa de palabras</h3><span class="etiqueta" id="progresoPalabras">0 de 0 palabras</span></div><div class="reinicio-barra"><button class="boton" type="button" id="reiniciarCrucigrama" aria-label="Reiniciar las letras del crucigrama actual">↺ Reiniciar crucigrama</button></div><div class="crucigrama-contenedor" id="contenedorCuadricula"><div class="cuadricula" id="cuadricula" role="group" aria-label="Cuadrícula de palabras"></div></div><div class="bajo-tablero"><span class="contadores" id="extras">✨ Extras: 0/10</span><span class="etiqueta" id="minimo">Mínimo: 3 letras</span></div><div class="mensaje" id="mensaje" role="status" aria-live="polite">Conecta las letras para comenzar.</div></section>
+<section class="panel panel-rueda" aria-label="Rueda de letras"><p class="indicaciones">Desliza por las letras sin levantar el dedo.</p><div class="burbuja" id="burbuja" aria-live="off">¿Qué palabra ves?</div><div class="rueda-marco" id="marcoRueda"><svg id="rueda" viewBox="0 0 320 320" role="group" aria-label="Rueda de letras; arrastra por cada letra"></svg></div><div class="herramientas"><button class="boton" id="mezclar"><span class="simbolo" aria-hidden="true">🔀</span>Mezclar · Gratis</button><button class="boton" id="pista"><span class="simbolo" aria-hidden="true">💡</span>Pista · 25 💎</button><button class="boton" id="martillo"><span class="simbolo" aria-hidden="true">🔨</span>Martillo · 50 💎</button></div><form class="teclado" id="formularioPalabra"><input id="entrada" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Escribe una palabra con las letras disponibles" placeholder="O escribe tu palabra…"><button type="submit" class="boton primario">Probar ↵</button></form><div class="ayuda-teclado">Alternativa accesible: escribe con el teclado y pulsa Intro.</div></section></section>
+<footer class="pie">Sin prisas, sin anuncios y sin conexión · Cada palabra abre un camino.</footer>
+</main>
+<div id="modal" class="cortina oculto" role="presentation"><section class="dialogo" role="dialog" aria-modal="true" aria-labelledby="modalTitulo"><button id="cerrarModal" class="cerrar" aria-label="Cerrar ventana">✕</button><div id="modalContenido"></div></section></div><div id="capaConfeti" class="confeti oculto" aria-hidden="true"></div>
+<script>
+'use strict';
+/* Ruta de Letras: juego original, sin bibliotecas ni conexiones externas. */
+const $ = identificador => document.getElementById(identificador);
+const MUNDOS=[
+ {nombre:'Desierto de los ecos',cielo:['#f6ddb0','#f9ecd9'],suelo:'#dfaa73',detalle:'#b67f5c',icono:'☀️'},
+ {nombre:'Selva luminosa',cielo:['#b8e1c6','#e6f6dc'],suelo:'#77b994',detalle:'#387c67',icono:'🌿'},
+ {nombre:'Cumbres del viento',cielo:['#bedfed','#eef7f8'],suelo:'#85a8ac',detalle:'#617e94',icono:'🏔️'},
+ {nombre:'Costa de las mareas',cielo:['#c1e6ea','#effaf1'],suelo:'#87c5b5',detalle:'#3e94a5',icono:'🐚'},
+ {nombre:'Ciudad de los relatos',cielo:['#e8d6bd','#faf1dc'],suelo:'#cbb495',detalle:'#957760',icono:'🏛️'}
+];
+const CLAVE='ruta-de-letras-original-v1';
+const RECHAZADAS=new Set(['PUTA','PUTO','COÑO','MIERDA','JODER','CULO','TETA','PENE']);
+const normalizar=texto=>texto.toLocaleUpperCase('es').normalize('NFD').replace(/[\u0300-\u0301\u0302\u0304\u0308]/g,'').normalize('NFC').replace(/[^A-ZÑ]/g,'');
+const contar=texto=>{const conteo={};for(const letra of texto)conteo[letra]=(conteo[letra]||0)+1;return conteo};
+const formable=(palabra,letras)=>{const disponibles=contar(letras);return [...palabra].every(letra=>disponibles[letra]-- >0)};
+const aleatorioSemilla=semilla=>()=>{semilla=(Math.imul(1664525,semilla)+1013904223)>>>0;return semilla/4294967296};
+const mezclarLista=(lista,aleatorio)=>{const copia=[...lista];for(let i=copia.length-1;i>0;i--){const j=Math.floor(aleatorio()*(i+1));[copia[i],copia[j]]=[copia[j],copia[i]]}return copia};
+
+/* Cada entrada es vocabulario cotidiano. La prioridad de selección sigue su orden. */
+function cargarDiccionario(){
+const grupos=[
+'GATO GOTA TOGA CASA SACA ASA ROSA ARO ORA OSA MAR AMAR RAMA ARMA MORA AMOR ROMA MALO LOMA MOLA LOMA SOL LOS OSO OSA SAL LAS ALA SALA ALAS ASAL PASO SOPA SAPO POSA PATO TAPA PATA APTO TOPA TOPO POTO',
+'RATO ROTA OTRA NOTA TONA NORA RANA NARANJA ARA RARO RARA CARA ARCA CAMA MACA CADA DACA CODO DOCO COCO LOCO COLA CALO LACO CALA LACA LAGO GOLA GALO GALLO GALLO',
+'CAMINO CAMION MANO MINA CIMA MICA AMO CON ION MONA MIMO MIMA MIO MIA MIRA RAMI RAMO MARI MARINO NORMA ROMAN MANGO MAGO GOMA AMIGO AMIGA GAMA GANA GANO NAGO NOMA',
+'PERA PARE RAPE PAR PARO ROPA PORA PROA POPA POPA PAPA PATA TAPA MAPA PAMA MASA AMAS MESA MEAS SEMAS TEMA META MATE TOMA MOTA ATOMO TOMATE MATO TOMA',
+'PINO PONI PION PIO NO PIO PINA PENA PANE PAN PEON PEONA PONER PONEN PONE PENA PENO PELO LEO LEON LONA OLA OLE OLEN LENO LENTO TONEL TELON LOTE TOLER',
+'LUNA NULA ULNA NULO UNO UNA ALUN ALUNO AULA AULAS LUNAS LUNAR LUNARES LUGAR GRUA AGUA GULA AGUILA GUIA IGUAL GUIAR GUARA GIRA RIGA RISA SIRA',
+'RUTA URTA TURA URNA RUNA NUTRIA RITUA RITUAL LIRA RIAL LIRA RIEL LEER LEA REAL REALES REINA REINO RENO NERO NIRO NIDO DON DIOS DOS OIDO ODIOS SONIDO',
+'FLOR ROL FOCO FOCOS COLOR CALOR CLARO CLARA CARO CAROS ORAL COLAR CORAL COROLA COLA LORO ORO OROS ROCA ARCO CORO CORRA CORRA CORRA CORRER CORRE',
+'VELA VALE LEVA LAVE LAVA AVAL LAVAR LAVADO LADO DADO DALA ALDEA ADEL ADEA EDAD DEDA DEDO DEDOS DOLOR RODAR RADAR ARDAR ARDER RED REDES',
+'BESO SEBO SOBE BESO BESOS BASE SABE SABER BARES BAR BARCO CABO BOCA BOCAS BOLSA BOLA BOLAS LOBA LOBO LOBOS BALO BALA BALAS BALON NOBLE NOBLES',
+'RIO RIOS RIE RISA RISAS RISA SORO SERA SER SERIO SERIA SERENA ARENA ARENAS NARIZ RIZA RIZO ROIZ NORTE TERNO TREN REN TORE TORRE TERROR RETO ROTER',
+'RELOJ OJO OJOS ROJO ROJOS OLER OLER OLOR OLORES LOROS LORO LORAS ROSAL ROSALES SOLAR SOLARES SALERO SALEROS SALES SALEN SANO SANOS SANA SANAS',
+'PANAL PANA PLANA PLAN PLANO PLANOS PALMA PALMAS MAPAL PALA PALAS PALO PALOS LAPO PAPAL PELAR PERLA PERLAS PLEA PELA PELAS LAPA LAPAS TELA TELAS',
+'CIELO CELIO LICEO CERO CEROS CERCO CERCOS CERCA CARNE CARNES CENA CENAS CENAR NACER NACE NACES ARCE ARCES CERA CERAS ACERO ACEROS',
+'PARED PADRE PADRES DARE DARA DAR DE ARDE ARDEN DRENAR NADA NADAR NADO NADAN RADA RADA RODAN RONDA RONDAS RONDO DORA DORAR ORO',
+'TIERRA TIRA TIRAR RITA TAREA TAREAS ARTE ARTES RATA RATAS TRATA TRATAR TARDE TARDES DRETA DENTRO TREN TRAE TRAER RETA RETAR',
+'LIBRO LIBROS BOLI BOLIS BRILLO BRILLA BRILLAR LILO LIRIO LIRIOS LIO LORO BIRLO BIRLA BOLERO BOLEROS ROBLE ROBLES ROLLO ROLLOS',
+'FUEGO FUEGOS JUEGO JUEGOS JUGAR JUGO JUGOS AGUJA AGUJAS AGUDO AGUDOS AGUDA AGUDAS FUGA FUGAS GUSTO GUSTOS GUSTA GUSTAR',
+'HOJA HOJAS OJAL OJALES OJOS AJO AJOS HORA HORAS AHORA AHORAS HILO HILOS HILAR HOLA HALO HALOS HALA HALAS HALAR',
+'LLAVE LLAVES VALE VALES VALER LEVA LEVAS LLEVA LLEVAR LLEVO LLEVEN VELA VELAS VELAR AVE AVES LLENA LLENAR LLENO LLENOS',
+'BOSQUE BOSQUES BOTE BOTES BOTAR BOTA BOTAS BOCA BOCAS BECA BECAS BESO BESOS SECO SECOS SECA SECAS SACO SACOS SACAR COSA COSAS CASO CASOS',
+'CAMPO CAMPOS COPA COPAS PACO POCA POCAS POCO POCOS MOCA MACO CAMA CAMAS MAPA MAPAS MOPA MOPAS MOCO MOCOS AMPO',
+'NIEVE NIEVES VENE VEN VENIR VIENE VIENEN VINO VINOS VENA VENAS VELA VELAS VELO VELOS NIVEL NIVELES LEVE LEVES ELEVE',
+'NOCHE NOCHES OCHO OCHOS HECHO HECHOS ECHO ECHOS COCHE COCHES COCO COCOS CHECO CHECOS CHOCO CHOCOS CHOCAR',
+'PLAZA PLAZAS PAZ PALA PALAS ALZA ALZAS ALZAR LAZO LAZOS LOZA LOZAS ZALA ZAPATO ZAPATOS TAZA TAZAS TAZON TAZONES',
+'QUESO QUESOS QUE QUEJA QUEJAS QUEJAR QUEMA QUEMAS QUEMAR QUEDA QUEDAS QUEDAR QUISO QUISE QUIEN QUIENES QUIETO QUIETOS',
+'FRUTA FRUTAS RUTA RUTAS FUTURA FUTURO FUTUROS FURIA FURIAS RIFA RIFAS RIFAR FIRMA FIRMAS FIRMAR FIRME FIRMES',
+'ARBOL ARBOLES BOLAR BOLA BOLAS OBRA OBRAS OBRAR BARRO BARROS ROBAR ROBA ROBAS ROBAN ROBE ROBES ROBLE ROBLES',
+'PUERTA PUERTAS PURE PUREZA TUPER RETA RETAS RETAR PARTE PARTES PARE PARES PARAR PARTE PATERA TUPA PUPA PUPAS',
+'MUSICA MUSICO MUSICOS MUSA MUSAS SUMA SUMAS SUMAR USA USAS USAR CAMISA CAMISAS CIMA CIMAS MICA MICAS MISA MISAS',
+'TIGRE TIGRES GRITO GRITOS GRITA GRITAR GIRO GIROS GIRAR TRIGO TRIGOS RIEGO RIEGOS RIEGA REGAR RITO RITOS',
+'FARO FAROS FORO FOROS FOCA FOCAS FOCAL CALOR CALORES RALO RALOS RALA RALAS FALDA FALDAS FALLO FALLOS FALTA FALTAS',
+'DULCE DULCES LUZ LUCES LUCIR LUCE LUCEN CUIDA CUIDAR CUIDO CUIDAN CIELO CIELOS CEDO CEDA DUELA DUELAS DUELO DUELOS',
+'PUEBLO PUEBLOS PULSO PULSOS PULSA PULSAR PESO PESOS PESA PESAS PESAR PELO PELOS PELEA PELEAS PUEDE PUEDES',
+'MADERA MADERAS MADRE MADRES DAME DARA DARME MAR MARA MAREA MAREAS MAREAR RAMA RAMAS ARMA ARMAS ARMAR AMAR AMARE',
+'JARDIN JARDINES JIRA JIRAS RIN RINDA RINDE RINDEN DINA DIANA DIA DIAS IRAN RIAN RINDA DIRA DIRAN INDIO INDIOS',
+'COMETA COMETAS META METAS TEMA TEMAS TOMA TOMAS TOME TOMES CAMA CAMAS MATE MATES MATO MATOS COME COMES COMEN COMER',
+'PINTAR PINTA PINTAS PINTO PIN PINTOR PINTORES PATO PATOS PATA PATAS ROPA ROPAS TRIPA TRIPAS TIRA TIRAS TIRAN TIRAR',
+'ESTRELLA ESTRELLAS ESTAR ESTAS ESTE ESTES SAL SALA SALAS LATA LATAS TELA TELAS LELA LELAS REAL REALES TRES TRAS',
+'ESPEJO ESPEJOS PEJE PEJES OJOS OJO PESO PESOS PESE PESA SEPA SEPAS SEPO SEOS ESO ESOS ESA ESAS PELO',
+'BOTELLA BOTELLAS BOTE BOTES BOTAR BOTA BOTAS BELLO BELLOS BELLA BELLAS LOBA LOBAS LOBO LOBOS TELA TELAS LOTE LOTES',
+'CARACOL CARACOLES CARA CARAS COLA COLAS CALA CALAS CLARA CLARAS CLARO CLAROS LORO LOROS ARCO ARCOS RALO RALOS',
+'VENTANA VENTANAS VENA VENAS VENTA VENTAS VENTA VENTAR NATA NATAS NAVE NAVES ANTE ANTES TANA TANTO TANTOS',
+'RINCON RINCONES RICO RICOS RICA RICAS CORO COROS CORRE CORRER NICO NOCION CINCO CINCO CERO CEROS CIRE',
+'PAPEL PAPELES PELA PELAS PELAR PAPA PAPAS PALA PALAS PALO PALOS PEA PEAS PEPE PEPA PEPO LAPE LAPE',
+'LECHE LECHES HELE HIELO HIELOS LECHO LECHOS LEE LEES LEEN LEER HECHO HECHOS ECHO ECHOS OLE OLES',
+'PESCADO PESCADOS PESCA PESCAS PESCAR PASE PASES PASO PASOS PESA PESAS PESAR SACO SACOS CASO CASOS COPA COPAS',
+'CAMELLO CAMELLOS CAMELLA CAMA CAMAS CALLE CALLES CALLO CALLOS LEMA LEMAS MALO MALOS MALA MALAS COLA COLAS',
+'CAMINAR CAMINA CAMINAS CAMINO CAMINOS CIMA CIMAS MINA MINAS MINAR RAMA RAMAS RIMA RIMAS RIMAR MAR MARINO',
+'PAISAJE PAISAJES PAIS PAISES PASA PASAS PASE PASES PESE PESAS PESA PIE PIES PISA PISAS PISAR SAJE',
+'CORAZON CORAZONES ZONA ZONAS CORO COROS ARCO ARCOS ORCA ORCAS ROCA ROCAS CARO CAROS CARA CARAS RAZON RAZONES',
+'PENSAR PIENSA PIENSAS PENA PENAS PESA PESAS PESAR PASE PASES PASEAR PIAN PIANO PIANOS PINE PINES',
+'CIUDAD CIUDADES CUIDA CUIDAS CUIDAR DUDA DUDAS DUDAR DADO DADOS DADA DADAS CAIDA CAIDAS CAIDO CAIDOS',
+'PRADERA PRADERAS PARED PAREDES PADRE PADRES PERA PERAS PARE PARES PARAR PARADA PARADAS DAR DARE ARDE ARDER',
+'ANILLO ANILLOS LILA LILAS LILO LILOS LINA LINO LINOS NILO LONA LONAS OLLA OLLAS ALLI ALI ALLO',
+'VIAJE VIAJES VIEJA VIEJAS VIEJO VIEJOS AJE AJA AJI EJE EJES EVA VEA VEAS VEAN VIA VIAS',
+'RECUERDO RECUERDOS CUERDO CUERDOS CUERO CUEROS CREO CREES CREER DURO DUROS DURA DURAS RUDO RUDOS',
+'VIOLETA VIOLETAS VELA VELAS VETO VETOS VETA VETAS LOTE LOTES TELA TELAS LATO LATE LATEN LENTO',
+'NAVIDAD NAVIDADES VIDA VIDAS VIVA VIVAS VIVO VIVOS NADA NADAS NADAR NIDO NIDOS NAVE NAVES DAN DANA',
+'CANELA CANELAS CANAL CANALES CENA CENAS CENAR LANA LANAS LACA LACAS CALA CALAS CELA CELAS ALA ALAS',
+'BANDERA BANDERAS BANDA BANDAS BARDA BARDAS BAR BARDE DARE DARA DAR DAN RANA RANAS NADA NADAR',
+'AVION AVIONES VINO VINOS NOVIA NOVIAS NOVIO NOVIOS NIVA NAVE NAVES NIDO NIDOS VIA VIAS VEO VEAN',
+'RECREO RECREOS CREO CREES CERO CEROS CORO COROS ECO ECOS ORO OROS ROCE ROCES REO REOS',
+'GIRASOL GIRASOLES GIRA GIRAS GIRAR GOL GOLS GOLAS SOL SOLAR SOLARES ROSA ROSAS RISA RISAS SILO SILOS',
+'TRABAJO TRABAJOS RATO RATOS RATO ROTA ROTAS BAR BARO BAJO BAJOS BAJA BAJAS TRABA TRABAS AJO AJOS',
+'ABUELO ABUELOS ABUELA ABUELAS BOLA BOLAS LOBA LOBAS LOBO LOBOS LEO LEA LEAS LEEN OLE OLES',
+'PALABRA PALABRAS PALA PALAS PARA PARAS PARAR RAPA RAPAS RABA BALA BALAS ALBA ALBAS LAPA LAPAS',
+'CAMINATA CAMINATAS CANTA CANTAS CANTAR CAMA CAMAS MANTA MANTAS MATA MATAS MATAR NATA NATAS TINA TINAS',
+'BICICLETA BICICLETAS CITA CITAS CITA CITE CITES TELA TELAS CELA CELAS BICI BICIS LICEO LICEOS',
+'RAQUETA RAQUETAS RETA RETAS RETAR RATA RATAS TAREA TAREAS TERA TERAS AURA AURAS ARTE ARTES',
+'PLANTA PLANTAS PLATA PLATAS PATA PATAS TAPA TAPAS TAPAR PALA PALAS PANA PANAS LANA LANAS ALTA ALTAS',
+'PESCAR PECAS PECAR PESA PESAS PASE PASES PARE PARES PARAR SEPA SEPAS SACAR CASA CASAS',
+'AMISTAD AMISTADES MISA MISAS MASA MASAS MATA MATAS MATAR MIDA MIDAS DIA DIAS TIA TIAS TAMA',
+'CABALLO CABALLOS CALLO CALLOS CALA CALAS BALA BALAS BOLA BOLAS LOBA LOBAS LOBO LOBOS CABO CABOS',
+'NEVADO NEVADOS NAVE NAVES VENA VENAS VADO VADOS DADO DADOS NADA NADAS NADAR VEA VEAN DOVA',
+'TORRE TORRES RETO RETOS ROTO ROTOS ROTA ROTAS TERO TEROS ORO OROS REO REOS TRES TREN',
+'CASCADA CASCADAS CASA CASAS CADA CADAS SACA SACAS SACAR DACA DADA DADAS ASADA ASADAS ASA ASAS',
+'HELADO HELADOS HELA HELAS HELAR LADO LADOS LEA LEAS LEER DADO DADOS DALA DALAS OLE OLES',
+'CORREDOR CORREDORES CORRE CORRES CORRER CORO COROS CREO CREES CREER CERO CEROS ROCE ROCES',
+'MARIPOSA MARIPOSAS MAR MARA MARAS MIRA MIRAS MIRAR PISO PISOS PISA PISAS PISAR PASO PASOS',
+'ALMENDRA ALMENDRAS ALDEA ALDEAS ALMA ALMAS LEMA LEMAS MADERA MADERAS MAREA MAREAS',
+'SENDEROS SENDERO SENDAS SENDA RONDA RONDAS RONDO RED REDES DORO ORO OROS DON DONES SON SENO SENOS',
+'CAMISA CAMISAS CAMA CAMAS CIMA CIMAS MISA MISAS MASA MASAS MICA MICAS SACO SACOS COSA COSAS',
+'PLUMAS PLUMA PULSA PULSAR SUMA SUMAS SUMAR MULA MULAS MUSA MUSAS PUMA PUMAS SAL SALA SALAS',
+'ESCALERA ESCALERAS ESCALA ESCALAS SALA SALAS CALA CALAS CARA CARAS CASA CASAS REAL REALES',
+'PLANETA PLANETAS PLANA PLANAS PLANO PLANOS LATA LATAS NATA NATAS TELA TELAS PENA PENAS',
+'REMOLINO REMOLINOS MOLINO MOLINOS MINO MINOS LINO LINOS LOMA LOMAS ROMO ROMOS OLER OLOR',
+'FAMILIA FAMILIAS MALA MALAS MALLA MALLAS FILA FILAS FILAR LIMA LIMAS MIMA MIMAS',
+'LIBRETA LIBRETAS LIBRE LIBRES LETRA LETRAS TELA TELAS REAL REALES RIEL RIELES TIRA TIRAS',
+'FELINO FELINOS FINO FINOS FINA FINAS FILO FILOS LINO LINOS LEON LEONES OLE OLES',
+'CARTA CARTAS CARA CARAS RATA RATAS TARA TARAS ARCA ARCAS RACA ARTA TAR TARO',
+'TESORO TESOROS RESTO RESTOS RETO RETOS TOS TOSER TRES TORO TOROS ORO OROS',
+'MONEDA MONEDAS MANO MANOS MODA MODAS DON DONES DAMA DAMAS NADA NADAS AMO AMOS',
+'AZUL AZULES LUZ LUCES LUNA LUNAS LONA LONAS LOZA LOZAS ZONA ZONAS ALZA ALZAS',
+'SONRISA SONRISAS ROSA ROSAS RISA RISAS SANO SANOS SANA SANAS ASIR RASO RASOS RASO',
+'VOLCAN VOLCANES COLA COLAS LONA LONAS VOLA VOLAR CLAN CLANES CALO CALOR',
+'PINTURA PINTURAS PINTA PINTAS PINTAR TIRA TIRAS TIRAR RUTA RUTAS TRIPA TRIPAS',
+'ESCENA ESCENAS CENA CENAS CENAR SECA SECAS CASA CASAS CANA CANAS NACE NACEN',
+'MOTIVO MOTIVOS MOTO MOTOS VOTO VOTOS VOTA VOTAS VOTAR TIO TIOS MIO MIOS',
+'SILENCIO SILENCIOS CIELO CIELOS SENO SENOS SINO SINOS LINO LINOS LISO LISOS',
+'CORRIENTE CORRIENTES CIERTO CIERTOS CIERRE CIERRES CORTE CORTES CORTO CORTOS',
+'PIRATA PIRATAS PATA PATAS TAPA TAPAS TIRA TIRAS RATA RATAS TRIPA TRIPAS',
+'GRANDE GRANDES GRANO GRANOS GRANA GRANAS RANGO RANGOS RANA RANAS GANA GANAS',
+'ESTACION ESTACIONES CANTO CANTOS CANTA CANTAS CANTAR TACO TACOS TINA TINAS',
+'PASTEL PASTELES PASTA PASTAS PASE PASES PESA PESAS LATA LATAS TELA TELAS',
+'COCINA COCINAS COCINO COCINAR CIMA CIMAS NICO COCA COCAS OCA OCAS',
+'MANZANA MANZANAS MANO MANOS MANA MANAS NANA NANAS ZANA ZANAS AMAN AMAS',
+'LIBERTAD LIBERTADES LIBRE LIBRES TARDE TARDES REAL REALES DARE DAR',
+'PERFUME PERFUMES PERA PERAS FUE FUMO FUMAR MUER MUERE MUERES',
+'CAMINANTE CAMINANTES CAMINA CAMINAS CAMINAR CANTA CANTAS CANTAR CAMA CAMAS',
+'RINCONES RINCON CERO CEROS CINE CINES RICO RICOS COCER CONE CONOS',
+'GORRION GORRIONES GORRO GORROS GIRO GIROS GIRAR RIO RIOS ORO OROS',
+'NARANJO NARANJOS NARANJA NARANJAS RAJA RAJAS RAJAR RANA RANAS AJO AJOS',
+'TRAVESIA TRAVESIAS TRAVE TIRA TIRAS TIRAR TRES RISA RISAS VIA VIAS',
+'RECUENTO RECUENTOS CUENTO CUENTOS CERO CEROS CURE CURA CURAS CORTE CORTES',
+'VIAJERO VIAJEROS VIEJO VIEJOS VIEJA VIEJAS VIAJE VIAJES RIO RIOS AJO AJOS',
+'ABRIGO ABRIGOS ABRO ABRE ABRES ABRIR GIRO GIROS GIRAR BARRO BARROS',
+'MISTERIO MISTERIOS METRO METROS RITO RITOS TEMO TEMES TEMER TRES',
+'CANASTA CANASTAS CANTA CANTAS CANTAR CASA CASAS TASA TASAS SANA SANAS',
+'INVIERNO INVIERNOS VINO VINOS RENO RENOS NERVIO NERVIOS VIENE VIENEN',
+'ALIMENTO ALIMENTOS MENTA MENTAS LENTO LENTOS META METAS TEMA TEMAS',
+'PREGUNTA PREGUNTAS PUNTA PUNTAS PUNTO PUNTOS RUTA RUTAS RETA RETAS',
+'RODILLA RODILLAS LADO LADOS RODA RODAR LIRA LIRAS DOLAR DOLARES',
+'BRISA BRISAS RISA RISAS BISA BISAS ABRIR BARRA BARRAS BAR BAROS',
+'TERNURA TERNURAS RUTA RUTAS RENTA RENTAS RETA RETAS TREN TRENA',
+'OLIVO OLIVOS VILO VILOS LIO LIOS VIO VIVOS LIVO OLIO',
+'ORILLA ORILLAS LIRA LIRAS LILO LILOS ROL ROLA ROLAS OLLA OLLAS',
+'MARFIL MARFILES FILA FILAS FILAR LIMA LIMAS MIRA MIRAS MIRAR',
+'CAMARON CAMARONES CAMARA CAMARAS MAR MARA MARAS RAMO RAMOS RAMA RAMAS',
+'CEREZA CEREZAS CERA CERAS CERE CECE ZARZA ZARZAS REZA REZAS REZAR',
+'MERIENDA MERIENDAS MAREA MAREAS MINA MINAS RIMA RIMAS RIMAR',
+'PALMERA PALMERAS PALMA PALMAS PERLA PERLAS PELA PELAS PELAR',
+'AVENTURA AVENTURAS VENTA VENTAS RUTA RUTAS RETA RETAS AURA AURAS',
+'LECHUGA LECHUGAS LEGA LEGAS LACE LACES LUCHA LUCHAS LUCHAR',
+'CIRCULO CIRCULOS CULO CIRCOS CIRCO CIRCOS RICO RICOS LORO LOROS',
+'FUENTE FUENTES FUETE FUETES TUNE TUNES TEN TENE TENER FUE FUI',
+'VENTOSO VENTOSOS VENTO VENTOS VOTO VOTOS VETO VETOS SENO SENOS',
+'ACUARIO ACUARIOS CARO CAROS CARA CARAS ARCO ARCOS RICO RICOS',
+'GALERIA GALERIAS GIRA GIRAS GIRAR REAL REALES LIRA LIRAS',
+'ESCRITO ESCRITOS CIERTO CIERTOS RESTO RESTOS CERO CEROS',
+'ESCUELA ESCUELAS CALLE CALLES SALA SALAS SECA SECAS',
+'PUESTITO PUESTO PUESTOS PISTA PISTAS PISO PISOS',
+'BARQUITO BARQUITOS BARCO BARCOS RATO RATOS RUTA RUTAS',
+'ARENA ARENAS RANA RANAS NARA ARAR RARA RARAS',
+'PATRIA PATRIAS TRIPA TRIPAS PIRA PIRAS TIRA TIRAS',
+'ESTELA ESTELAS TELA TELAS SALA SALAS LATA LATAS',
+'GAVIOTA GAVIOTAS GATO GATOS GOTA GOTAS GOTA TOGA',
+'CARRETA CARRETAS CARTA CARTAS CERA CERAS RETA RETAS',
+'ABANICO ABANICOS BOCA BOCAS CABO CABOS CANA CANAS',
+'ALFOMBRA ALFOMBRAS FLOR FLORES ARMA ARMAS RAMA RAMAS',
+'FRESCURA FRESCURAS FRESA FRESAS CURA CURAS CERA CERAS',
+'JAZMIN JAZMINES MINA MINAS MIZA MIZA MIA MIAS',
+'LLUVIA LLUVIAS LILA LILAS VIA VIAS VILLA VILLAS',
+'PAZ PAZOS RIO RIOS SOL SOLES PAN PANES NUBE NUBES',
+'ÑANDU ÑANDUES AÑO AÑOS NIÑO NIÑOS NIÑA NIÑAS SUEÑO SUEÑOS CAÑA CAÑAS PIÑA PIÑAS PEÑA PEÑAS UÑA UÑAS LEÑA LEÑAS MAÑA MAÑAS BAÑO BAÑOS',
+'ARBUSTO ARBUSTOS HUERTO HUERTOS ROCIO ROCIOS PRADO PRADOS SENDERO SENDEROS',
+'MAIZ MAICES GRANJA GRANJAS CAMINO CAMINOS LLANO LLANOS',
+'CALIDO CALIDOS CALIDA CALIDAS RAPIDO RAPIDOS RAPIDA RAPIDAS',
+'GRACIA GRACIAS GRACIOSO GRACIOSOS GRACIOSA GRACIOSAS',
+'TRANQUILO TRANQUILOS TRANQUILA TRANQUILAS SUAVE SUAVES ALEGRE ALEGRES',
+'SOMBRA SOMBRAS SOMBRERO SOMBREROS BRUMA BRUMAS NUBES NUBE'
+];
+const vistos=new Set(),resultado=[];
+for(const grupo of grupos)for(const bruto of grupo.split(/\s+/)){
+ const palabra=normalizar(bruto);
+ if(palabra.length>=3&&palabra.length<=10&&!RECHAZADAS.has(palabra)&&!vistos.has(palabra)){vistos.add(palabra);resultado.push(palabra)}
+}
+return resultado;
+}
+const DICCIONARIO=cargarDiccionario(),INDICE=new Set(DICCIONARIO);
+const especiales=['GATO','CASA','ROSA','RATO','CAMINO','FLOR','CAMISA','MADERA','CANELA','PLANETA','ALMENDRA','MARIPOSA','CAMINAR','PINTURA','TESORO','SENDEROS','PLANTA','LIBRETA','CARACOL','ABUELO'];
+
+/* Colocación con retroceso, solo cruces ortogonales válidos y tablero conexo. */
+const TAM=19;
+const nuevoTablero=()=>Array.from({length:TAM},()=>Array(TAM).fill(''));
+function comprobarColocacion(tablero,texto,f,c,vertical,primera){
+ let cruces=0;
+ const dr=vertical?1:0,dc=vertical?0:1;
+ const f0=f-dr,c0=c-dc,ff=f+dr*texto.length,cc=c+dc*texto.length;
+ if(f<0||c<0||f+dr*(texto.length-1)>=TAM||c+dc*(texto.length-1)>=TAM)return -1;
+ if((f0>=0&&c0>=0&&tablero[f0][c0])||(ff<TAM&&cc<TAM&&tablero[ff][cc]))return -1;
+ for(let i=0;i<texto.length;i++){
+ const y=f+dr*i,x=c+dc*i,actual=tablero[y][x];
+ if(actual){if(actual!==texto[i])return -1;cruces++}
+ else if(vertical){if((x>0&&tablero[y][x-1])||(x<TAM-1&&tablero[y][x+1]))return -1}
+ else if((y>0&&tablero[y-1][x])||(y<TAM-1&&tablero[y+1][x]))return -1;
+ }
+ return !primera&&cruces===0?-1:cruces;
+}
+function opcionesColocacion(tablero,texto,primera){
+ const opciones=[];
+ if(primera){for(let dir=0;dir<2;dir++)opciones.push({fila:9,columna:9,vertical:!!dir,cruces:0});return opciones}
+ for(let vertical=0;vertical<2;vertical++)for(let f=0;f<TAM;f++)for(let c=0;c<TAM;c++){
+ if(!tablero[f][c])continue;
+ for(let i=0;i<texto.length;i++){
+ if(texto[i]!==tablero[f][c])continue;
+ const fila=f-(vertical?i:0),columna=c-(vertical?0:i);
+ const cruces=comprobarColocacion(tablero,texto,fila,columna,!!vertical,false);
+ if(cruces>=1)opciones.push({fila,columna,vertical:!!vertical,cruces});
+ }
+ }
+ opciones.sort((a,b)=>b.cruces-a.cruces||Math.abs(a.fila-9)+Math.abs(a.columna-9)-Math.abs(b.fila-9)-Math.abs(b.columna-9));
+ return opciones.slice(0,22);
+}
+function poner(tablero,texto,opcion){const copia=tablero.map(f=>[...f]);for(let i=0;i<texto.length;i++)copia[opcion.fila+(opcion.vertical?i:0)][opcion.columna+(opcion.vertical?0:i)]=texto[i];return copia}
+function construirCrucigrama(candidatas,objetivo,semilla){
+ let mejor=null,visitas=0;const azar=aleatorioSemilla(semilla);
+ function buscar(tablero,colocadas,restantes){
+ if(!mejor||colocadas.length>mejor.colocadas.length)mejor={tablero,colocadas};
+ if(colocadas.length>=objetivo||++visitas>1100)return colocadas.length>=objetivo;
+ const primeras=colocadas.length===0;
+ const grupo=primeras?restantes.slice(0,1):restantes.slice(0,Math.min(20,restantes.length));
+ const posibilidades=[];
+ for(const texto of grupo){let opciones=opcionesColocacion(tablero,texto,primeras);if(azar()>.5)opciones=opciones.slice(0,10);for(const opcion of opciones)posibilidades.push({texto,opcion})}
+ posibilidades.sort((a,b)=>b.opcion.cruces-a.opcion.cruces||candidatas.indexOf(a.texto)-candidatas.indexOf(b.texto));
+ for(const {texto,opcion} of posibilidades.slice(0,48)){
+  const tableroNuevo=poner(tablero,texto,opcion);
+  const registro={texto,fila:opcion.fila,columna:opcion.columna,direccion:opcion.vertical?'vertical':'horizontal'};
+  if(buscar(tableroNuevo,[...colocadas,registro],restantes.filter(p=>p!==texto)))return true;
+  if(visitas>1100)break;
+ }
+ return false;
+ }
+ buscar(nuevoTablero(),[],candidatas);
+ if(!mejor||mejor.colocadas.length<3)return null;
+ let inferior=TAM,superior=0,izquierda=TAM,derecha=0;
+ for(let y=0;y<TAM;y++)for(let x=0;x<TAM;x++)if(mejor.tablero[y][x]){inferior=Math.min(inferior,y);superior=Math.max(superior,y);izquierda=Math.min(izquierda,x);derecha=Math.max(derecha,x)}
+ const palabras=mejor.colocadas.map(p=>({...p,fila:p.fila-inferior,columna:p.columna-izquierda}));
+ return {filas:superior-inferior+1,columnas:derecha-izquierda+1,palabras};
+}
+function generarNivel(id){
+ const indice=id-1,mundo=Math.floor(indice/20),fase=indice%20;
+ const cantidadLetras=Math.min(7,4+Math.floor(indice/25));
+ const minimo=indice<12?3:indice<60?3:4;
+ const meta=Math.min(10,3+Math.floor(indice/12));
+ const fuentes=DICCIONARIO.filter(p=>p.length===cantidadLetras);
+ const azar=aleatorioSemilla(id*7919+33);
+ let anclas=id===1?['GATO']:mezclarLista(fuentes,azar);
+ if(id<=20&&id!==1)anclas=[especiales[fase%especiales.length],...anclas];
+ let elegido=null;
+ for(const anclaBruta of anclas.slice(0,Math.min(55,anclas.length))){
+ const ancla=normalizar(anclaBruta);if(ancla.length!==cantidadLetras)continue;
+ const formables=DICCIONARIO.filter(p=>p.length>=minimo&&p.length<=cantidadLetras&&formable(p,ancla));
+ if(formables.length<3)continue;
+ const candidatas=[ancla,...formables.filter(p=>p!==ancla)].slice(0,50);
+ const tablero=construirCrucigrama(candidatas,Math.min(meta,formables.length),id*53+ancla.charCodeAt(0));
+ if(tablero&&(!elegido||tablero.palabras.length>elegido.cuadricula.palabras.length))elegido={ancla,cuadricula:tablero,formables};
+ if(elegido&&tablero&&tablero.palabras.length>=meta)break;
+ }
+ if(!elegido){
+  /* Respaldo reproducible de tres palabras para no bloquear ningún nivel. */
+  const ancla='GATO';const cuadricula=construirCrucigrama(['GATO','GOTA','TOGA'],3,17);
+  elegido={ancla,cuadricula,formables:DICCIONARIO.filter(p=>formable(p,ancla)&&p.length>=3)};
+ }
+ const usadas=new Set(elegido.cuadricula.palabras.map(p=>p.texto));
+ return {id,mundo,letras:elegido.ancla,longitudMinima:minimo,cuadricula:elegido.cuadricula,palabrasExtra:elegido.formables.filter(p=>!usadas.has(p)),dificultad:{cantidadLetras,metaPalabras:meta,conseguidas:usadas.size}};
+}
+function guardar(){try{localStorage.setItem(CLAVE,JSON.stringify(estado))}catch(error){console.warn('No se pudo guardar el progreso:',error)}}
+function recuperar(){try{const e=JSON.parse(localStorage.getItem(CLAVE));if(e&&Number.isInteger(e.nivel)&&e.nivel>=1&&e.nivel<=100)return e}catch(error){console.warn('Se inició una partida nueva:',error)}return null}
+let estado=Object.assign({nivel:1,gemas:80,extrasTotales:0,extrasCiclo:0,cartas:[],reveladas:[],extraNivel:[],pistas:[],regaloFecha:'',ajustes:{sonido:true,vibracion:true,movimiento:true,letra:1}},recuperar()||{});
+let nivel,seleccion=[],posiciones=[],arrastrando=false,modoMartillo=false,terminado=false,sonidoContexto=null,temporizadorMensaje=null;
+const llave=(f,c)=>`${f},${c}`;
+const mapaLetras=()=>{const mapa=new Map();for(const p of nivel.cuadricula.palabras)for(let i=0;i<p.texto.length;i++)mapa.set(llave(p.fila+(p.direccion==='vertical'?i:0),p.columna+(p.direccion==='horizontal'?i:0)),p.texto[i]);return mapa};
+function ilustracion(mundo){
+ const m=MUNDOS[mundo];let silueta='';
+ if(mundo===0)silueta='<path d="M0 440Q160 290 350 425T750 420T1200 400V700H0Z" fill="#ebbb87"/><path d="M0 560Q210 420 440 540T900 510T1200 530V700H0Z" fill="#d69b6b"/><circle cx="950" cy="150" r="66" fill="#ffe7a3"/>';
+ if(mundo===1)silueta='<path d="M0 510Q260 390 500 500T1200 460V700H0Z" fill="#9bceac"/>'+[90,260,470,750,990,1150].map((x,i)=>`<path d="M${x} 570V${290+(i%3)*40}" stroke="#5e9473" stroke-width="19"/><circle cx="${x}" cy="${290+(i%3)*40}" r="${75+(i%2)*22}" fill="#61a17b"/>`).join('');
+ if(mundo===2)silueta='<path d="M0 540L230 185L410 450L625 120L850 480L1030 250L1200 490V700H0Z" fill="#8cb3c0"/><path d="M125 345L230 185L330 330L285 302L245 329L210 280Z M523 275L625 120L755 330L670 285L610 305Z M950 370L1030 250L1110 365L1040 333Z" fill="#eef9f5"/>';
+ if(mundo===3)silueta='<path d="M0 480Q220 430 450 480T900 485T1200 468V700H0Z" fill="#8acbd0"/><path d="M0 565Q180 525 360 565T720 562T1200 560" stroke="#e2f9ee" stroke-width="12" fill="none"/><path d="M770 510L770 310L880 510Z" fill="#fff8e6"/><path d="M766 520L766 285" stroke="#668980" stroke-width="10"/>';
+ if(mundo===4)silueta='<path d="M0 540Q240 470 450 520T950 510T1200 535V700H0Z" fill="#d1b995"/>'+[140,350,580,800,1050].map((x,i)=>`<rect x="${x}" y="${350+(i%2)*35}" width="125" height="260" rx="7" fill="#b49b80"/><path d="M${x-15} ${350+(i%2)*35}L${x+60} ${290+(i%2)*35}L${x+140} ${350+(i%2)*35}Z" fill="#9b8068"/><rect x="${x+43}" y="${420+(i%2)*35}" width="38" height="50" rx="18" fill="#f7e9c9"/>`).join('');
+ return `<svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="cielo" x2="0" y2="1"><stop stop-color="${m.cielo[0]}"/><stop offset="1" stop-color="${m.cielo[1]}"/></linearGradient></defs><rect width="1200" height="700" fill="url(#cielo)"/>${silueta}</svg>`;
+}
+function mostrarPaisaje(){ $('paisaje').innerHTML=ilustracion(nivel.mundo)+'<div id="velo"></div>' }
+function sonido(tipo){if(!estado.ajustes.sonido)return;try{const Contexto=window.AudioContext||window.webkitAudioContext;if(!Contexto)return;sonidoContexto ||=new Contexto();if(sonidoContexto.state==='suspended')sonidoContexto.resume();const notas=tipo==='acierto'?[523,659,784]:tipo==='premio'?[523,659,784,1046]:[360];notas.forEach((frecuencia,i)=>{const oscilador=sonidoContexto.createOscillator(),volumen=sonidoContexto.createGain(),inicio=sonidoContexto.currentTime+i*.095;oscilador.type='sine';oscilador.frequency.value=frecuencia;volumen.gain.setValueAtTime(.0001,inicio);volumen.gain.exponentialRampToValueAtTime(.1,inicio+.02);volumen.gain.exponentialRampToValueAtTime(.0001,inicio+.21);oscilador.connect(volumen).connect(sonidoContexto.destination);oscilador.start(inicio);oscilador.stop(inicio+.23)})}catch(error){console.warn('No se pudo reproducir el tono:',error)}}
+function avisar(texto){$('mensaje').textContent=texto;clearTimeout(temporizadorMensaje);temporizadorMensaje=setTimeout(()=>{if(!terminado)$('mensaje').textContent='Sigue explorando las letras con calma.'},3800)}
+function actualizarCabecera(){const m=nivel.mundo,hechos=estado.nivel-1-m*20;$('tituloNivel').textContent=`${MUNDOS[m].icono} ${MUNDOS[m].nombre} · Nivel ${nivel.id}`;$('datosNivel').textContent=`Etapa ${hechos+1} de 20 · ${nivel.letras.length} letras disponibles`;$('avanceNombre').textContent='Camino del mundo';$('avanceTexto').textContent=`${hechos}/20`;$('barraProgreso').setAttribute('aria-valuenow',hechos);$('progreso').style.width=`${hechos*5}%`;$('gemas').textContent=`💎 ${estado.gemas}`;$('extras').textContent=`✨ Extras: ${estado.extrasCiclo}/10 · Total: ${estado.extrasTotales}`;$('minimo').textContent=`Mínimo: ${nivel.longitudMinima} letras`;$('progresoPalabras').textContent=`${estado.reveladas.length} de ${nivel.cuadricula.palabras.length} palabras`;$('regalo').textContent=estado.regaloFecha===fechaLocal()?'🎁 Recogido':'🎁 Regalo'}
+function fechaLocal(){const hoy=new Date();return `${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}-${String(hoy.getDate()).padStart(2,'0')}`}
+function dibujarCuadricula(){
+ const mapa=mapaLetras(),contenedor=$('contenedorCuadricula'),area=$('cuadricula');let ancho=contenedor.clientWidth-10;const columnas=nivel.cuadricula.columnas,filas=nivel.cuadricula.filas;
+ const lado=Math.max(15,Math.min(57,Math.floor((ancho-(columnas-1)*5)/columnas),Math.floor((Math.max(210,contenedor.clientHeight-20)-(filas-1)*5)/filas)));
+ area.style.setProperty('--lado',`${lado}px`);area.style.gridTemplateColumns=`repeat(${columnas},var(--lado))`;area.innerHTML='';
+ for(let f=0;f<filas;f++)for(let c=0;c<columnas;c++){
+  const div=document.createElement('div'),clave=llave(f,c),letra=mapa.get(clave),mostrada=estado.pistas.includes(clave)||nivel.cuadricula.palabras.some(p=>estado.reveladas.includes(p.texto)&&pertenece(p,f,c));
+  div.className='casilla'+(letra?'':' vacia')+(mostrada?' descubierta':'')+(estado.pistas.includes(clave)?' pista':'')+(modoMartillo&&letra&&!mostrada?' elegible':'');
+  div.dataset.clave=clave;
+  if(letra){div.textContent=mostrada?letra:'';div.setAttribute('aria-label',`Fila ${f+1}, columna ${c+1}: ${mostrada?letra:'letra oculta'}${estado.pistas.includes(clave)?', pista':''}`);if(modoMartillo&&!mostrada){div.setAttribute('role','button');div.tabIndex=0;div.addEventListener('click',()=>aplicarMartillo(clave));div.addEventListener('keydown',evento=>{if(evento.key==='Enter'||evento.key===' '){evento.preventDefault();aplicarMartillo(clave)}})}}else div.setAttribute('aria-hidden','true');
+  area.appendChild(div);
+ }
+}
+function pertenece(p,f,c){return p.direccion==='horizontal'?p.fila===f&&c>=p.columna&&c<p.columna+p.texto.length:p.columna===c&&f>=p.fila&&f<p.fila+p.texto.length}
+function posicionesRueda(){const n=nivel.letras.length,radio=n===7?111:108;return [...nivel.letras].map((letra,i)=>{const angulo=-Math.PI/2+i*Math.PI*2/n;return {letra,x:160+Math.cos(angulo)*radio,y:160+Math.sin(angulo)*radio}})}
+function dibujarRueda(){
+ posiciones=posicionesRueda();const puntos=seleccion.map(i=>`${posiciones[i].x},${posiciones[i].y}`).join(' ');
+ $('rueda').innerHTML=`<circle cx="160" cy="160" r="151" fill="#edf7ef" stroke="#d0e5d7" stroke-width="3"/><circle cx="160" cy="160" r="55" fill="#daece0"/><text x="160" y="167" font-size="29" text-anchor="middle" fill="#77a597">✦</text><polyline points="${puntos}" fill="none" stroke="#d2a44b" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" opacity=".82"/>${posiciones.map((p,i)=>`<g data-indice="${i}"><circle cx="${p.x}" cy="${p.y}" r="${nivel.letras.length===7?34:37}" fill="${seleccion.includes(i)?'#337d69':'#ffffff'}" stroke="${seleccion.includes(i)?'#2d7562':'#94c1ad'}" stroke-width="3"/><text x="${p.x}" y="${p.y+12}" text-anchor="middle" font-size="37" font-weight="900" fill="${seleccion.includes(i)?'#fff':'#2b5e50'}">${p.letra}</text></g>`).join('')}`;
+ $('burbuja').textContent=seleccion.length?seleccion.map(i=>posiciones[i].letra).join(''):'¿Qué palabra ves?';
+}
+function indiceDesdePuntero(evento){const rect=$('rueda').getBoundingClientRect(),x=(evento.clientX-rect.left)*320/rect.width,y=(evento.clientY-rect.top)*320/rect.height;let mejor=-1,distancia=42;posiciones.forEach((p,i)=>{const distanciaActual=Math.hypot(x-p.x,y-p.y);if(distanciaActual<distancia){distancia=distanciaActual;mejor=i}});return mejor}
+function iniciarArrastre(evento){if(terminado)return;const indice=indiceDesdePuntero(evento);if(indice===-1)return;evento.preventDefault();arrastrando=true;seleccion=[indice];$('rueda').setPointerCapture(evento.pointerId);dibujarRueda()}
+function moverArrastre(evento){if(!arrastrando)return;const indice=indiceDesdePuntero(evento);if(indice!==-1&&!seleccion.includes(indice)){seleccion.push(indice);dibujarRueda()}}
+function finalizarArrastre(evento){if(!arrastrando)return;arrastrando=false;const palabra=seleccion.map(i=>posiciones[i].letra).join('');seleccion=[];dibujarRueda();evaluar(palabra)}
+function palabraDisponible(palabra){return palabra.length>=nivel.longitudMinima&&formable(palabra,nivel.letras)}
+function destellarBurbuja(clase){const burbuja=$('burbuja');burbuja.classList.remove('error','brillo');void burbuja.offsetWidth;burbuja.classList.add(clase);setTimeout(()=>burbuja.classList.remove(clase),700)}
+function destacarPalabra(palabra){const p=nivel.cuadricula.palabras.find(p=>p.texto===palabra);if(!p)return;for(let i=0;i<p.texto.length;i++){const clave=llave(p.fila+(p.direccion==='vertical'?i:0),p.columna+(p.direccion==='horizontal'?i:0));const nodo=[...$('cuadricula').children].find(e=>e.dataset.clave===clave);if(nodo){nodo.classList.remove('marcada');void nodo.offsetWidth;nodo.classList.add('marcada')}}}
+function animarPalabra(palabra){if(!estado.ajustes.movimiento)return;const p=nivel.cuadricula.palabras.find(p=>p.texto===palabra);if(!p)return;const origen=$('marcoRueda').getBoundingClientRect();for(let i=0;i<p.texto.length;i++){
+ const clave=llave(p.fila+(p.direccion==='vertical'?i:0),p.columna+(p.direccion==='horizontal'?i:0));const destino=[...$('cuadricula').children].find(e=>e.dataset.clave===clave);if(!destino)continue;const fin=destino.getBoundingClientRect(),vuelo=document.createElement('span');vuelo.className='voladora';vuelo.textContent=p.texto[i];vuelo.style.left=`${origen.left+origen.width/2}px`;vuelo.style.top=`${origen.top+origen.height/2}px`;document.body.appendChild(vuelo);vuelo.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${fin.left-origen.left-origen.width/2+fin.width/3}px,${fin.top-origen.top-origen.height/2}px) scale(.65)`,opacity:0}],{duration:400+i*35,easing:'ease-in-out',fill:'forwards'}).onfinish=()=>vuelo.remove();setTimeout(()=>vuelo.remove(),800);
+ }}
+function evaluar(texto){if(terminado)return;const palabra=normalizar(texto);if(!palabra)return;$('entrada').value='';if(!palabraDisponible(palabra)){destellarBurbuja('error');avisar(`Prueba una palabra de al menos ${nivel.longitudMinima} letras, usando cada ficha una sola vez.`);if(estado.ajustes.vibracion&&navigator.vibrate)navigator.vibrate(25);return}
+ if(estado.reveladas.includes(palabra)||estado.extraNivel.includes(palabra)){destacarPalabra(palabra);avisar('Esa palabra ya forma parte de tu viaje. ¡Busca otra!');return}
+ if(nivel.cuadricula.palabras.some(p=>p.texto===palabra)){
+  animarPalabra(palabra);estado.reveladas.push(palabra);guardar();sonido('acierto');avisar(`¡Muy bien! Encontraste «${palabra.toLocaleLowerCase('es')}».`);dibujarCuadricula();destacarPalabra(palabra);actualizarCabecera();if(estado.reveladas.length===nivel.cuadricula.palabras.length)setTimeout(()=>{if(!terminado&&estado.reveladas.length===nivel.cuadricula.palabras.length)completarNivel()},estado.ajustes.movimiento?650:50);return;
+ }
+ if(nivel.palabrasExtra.includes(palabra)){
+  estado.extraNivel.push(palabra);estado.extrasTotales++;estado.extrasCiclo++;
+  let aviso=`¡Palabra extra «${palabra.toLocaleLowerCase('es')}»! ${estado.extrasCiclo} de 10 para el regalo.`;
+  if(estado.extrasCiclo>=10){estado.extrasCiclo-=10;estado.gemas+=30;aviso='🎉 ¡Diez palabras extra! Ganaste 30 gemas.';sonido('premio')}else sonido('acierto');
+  destellarBurbuja('brillo');avisar(aviso);actualizarCabecera();guardar();return;
+ }
+ destellarBurbuja('error');avisar('Esa combinación no está en nuestro diccionario. ¡Prueba otra!');if(estado.ajustes.vibracion&&navigator.vibrate)navigator.vibrate(25);
+}
+function reiniciarCrucigrama(){
+ if(terminado){avisar('Este nivel ya terminó. Continúa al siguiente.');return}
+ if(!estado.reveladas.length&&!estado.pistas.length){avisar('El crucigrama ya está vacío. Puedes comenzar a formar palabras.');return}
+ estado.reveladas=[];
+ estado.pistas=[];
+ modoMartillo=false;
+ seleccion=[];
+ arrastrando=false;
+ $('entrada').value='';
+ dibujarRueda();
+ dibujarCuadricula();
+ actualizarCabecera();
+ guardar();
+ avisar('Crucigrama reiniciado. Puedes volver a formar todas las palabras. Las gemas y las palabras extra se conservan.');
+}
+function costeSuficiente(coste){if(estado.gemas>=coste)return true;avisar(`Te faltan ${coste-estado.gemas} gemas. Puedes ganar 10 por nivel, 30 por diez palabras extra o recoger el regalo diario.`);return false}
+function revelarPista(){if(terminado)return;const disponibles=[...mapaLetras().keys()].filter(clave=>!casillaVisible(clave));if(!disponibles.length){avisar('Ya están visibles todas las letras pendientes.');return}if(!costeSuficiente(25))return;const clave=disponibles[Math.floor(Math.random()*disponibles.length)];estado.gemas-=25;estado.pistas.push(clave);guardar();dibujarCuadricula();actualizarCabecera();sonido('acierto');avisar('💡 Una letra del camino acaba de iluminarse.')}
+function casillaVisible(clave){if(estado.pistas.includes(clave))return true;const [f,c]=clave.split(',').map(Number);return nivel.cuadricula.palabras.some(p=>estado.reveladas.includes(p.texto)&&pertenece(p,f,c))}
+function iniciarMartillo(){if(terminado)return;if(modoMartillo){modoMartillo=false;dibujarCuadricula();avisar('Martillo desactivado.');return}const hay=[...mapaLetras().keys()].some(clave=>!casillaVisible(clave));if(!hay){avisar('No quedan casillas ocultas.');return}if(!costeSuficiente(50))return;modoMartillo=true;dibujarCuadricula();avisar('🔨 Toca una casilla vacía resaltada para revelar su letra. Se cobran 50 gemas al elegirla.')}
+function aplicarMartillo(clave){if(!modoMartillo||casillaVisible(clave))return;if(!costeSuficiente(50)){modoMartillo=false;dibujarCuadricula();return}estado.gemas-=50;estado.pistas.push(clave);modoMartillo=false;guardar();actualizarCabecera();dibujarCuadricula();sonido('acierto');avisar('🔨 ¡Letra descubierta! Sigue tu ruta.')}
+function confeti(){const capa=$('capaConfeti');capa.classList.remove('oculto');capa.innerHTML='';if(!estado.ajustes.movimiento){setTimeout(()=>capa.classList.add('oculto'),100);return}for(let i=0;i<72;i++){const trozo=document.createElement('i');trozo.className='trozo';trozo.style.left=`${Math.random()*100}%`;trozo.style.background=['#e8b959','#67b695','#e89e87','#8bb1dc','#bca3da'][i%5];trozo.style.animationDelay=`${Math.random()*.75}s`;trozo.style.animationDuration=`${1.5+Math.random()*1.5}s`;capa.appendChild(trozo)}setTimeout(()=>{capa.innerHTML='';capa.classList.add('oculto')},3600)}
+function completarNivel(){if(terminado)return;terminado=true;modoMartillo=false;const antiguo=estado.nivel;estado.gemas+=10;let carta='';if(antiguo%20===0){const indice=Math.floor((antiguo-1)/20);if(!estado.cartas.includes(indice)){estado.cartas.push(indice);carta=`<p>🖼️ ¡Conseguiste la carta «${MUNDOS[indice].nombre}» para tu galería!</p>`}}sonido('premio');confeti();estado.nivel=Math.min(100,antiguo+1);estado.reveladas=[];estado.extraNivel=[];estado.pistas=[];guardar();actualizarCabecera();const ultimo=antiguo===100;abrirModal(`<div style="font-size:48px">${ultimo?'🏆':'🌟'}</div><h2 id="modalTitulo">${ultimo?'¡Completaste la gran ruta!':'¡Camino completado!'}</h2><p>Encontraste todas las palabras del nivel ${antiguo}.</p><p class="premio">+10 💎</p>${carta}<p>${ultimo?'Puedes volver a recorrer el último paisaje.':'Tu próximo paisaje de letras te espera.'}</p><div class="botones-dialogo"><button class="boton primario" id="continuar">${ultimo?'Volver a jugar':'Siguiente nivel →'}</button></div>`);$('continuar').addEventListener('click',()=>{cerrarModal();if(ultimo){estado.nivel=100;estado.reveladas=[];estado.extraNivel=[];estado.pistas=[];guardar()}iniciarNivel()})}
+function abrirModal(contenido){$('modalContenido').innerHTML=contenido;$('modal').classList.remove('oculto');$('cerrarModal').focus()}
+function cerrarModal(){$('modal').classList.add('oculto');$('modalContenido').innerHTML=''}
+function regaloDiario(){if(estado.regaloFecha===fechaLocal()){abrirModal('<h2 id="modalTitulo">🎁 Regalo recogido</h2><p>Ya giraste hoy. Mañana tendrás otra oportunidad gratuita.</p>');return}abrirModal('<h2 id="modalTitulo">La rueda de la alegría</h2><p>Un giro diario gratuito. Puedes ganar entre 10 y 100 gemas.</p><div class="regalo-ruleta" id="ruletaRegalo" aria-hidden="true">🎡</div><p id="resultadoRegalo">Tu regalo te espera.</p><button class="boton primario" id="girarRegalo">Girar gratis</button>');$('girarRegalo').onclick=()=>{if(estado.regaloFecha===fechaLocal())return;const premio=(1+Math.floor(Math.random()*10))*10;estado.regaloFecha=fechaLocal();estado.gemas+=premio;guardar();actualizarCabecera();$('girarRegalo').disabled=true;$('ruletaRegalo').style.transform=estado.ajustes.movimiento?'rotate(1440deg)':'none';$('resultadoRegalo').textContent=`¡Ganaste ${premio} gemas! Vuelve mañana por otro giro.`;sonido('premio')}}
+function abrirGaleria(){const cartas=MUNDOS.map((m,i)=>`<div class="carta ${estado.cartas.includes(i)?'':'bloqueada'}">${ilustracion(i)}<strong>${estado.cartas.includes(i)?'✓ Coleccionada':'🔒 Pendiente'} · ${m.nombre}</strong></div>`).join('');abrirModal(`<h2 id="modalTitulo">🖼️ Galería de paisajes</h2><p>Cada mundo completado te regala su carta ilustrada.</p><div class="galeria">${cartas}</div>`)}
+function abrirAjustes(){const a=estado.ajustes;abrirModal(`<h2 id="modalTitulo">⚙️ Ajustes</h2><p>Adapta el camino a tu gusto.</p>${[['sonido','Sonidos musicales'],['vibracion','Vibración suave'],['movimiento','Animaciones']].map(([clave,texto])=>`<label class="fila-ajuste">${texto}<input type="checkbox" data-ajuste="${clave}" ${a[clave]?'checked':''}></label>`).join('')}<label class="fila-ajuste">Tamaño de letras <select id="tamanoLetra" aria-label="Tamaño de letra"><option value="0.9">Pequeño</option><option value="1">Normal</option><option value="1.15">Grande</option><option value="1.3">Muy grande</option></select></label><p class="nota">También puedes escribir las palabras y pulsar Intro.</p>`);$('tamanoLetra').value=String(a.letra);$('modalContenido').querySelectorAll('[data-ajuste]').forEach(e=>e.addEventListener('change',()=>{estado.ajustes[e.dataset.ajuste]=e.checked;guardar()}));$('tamanoLetra').onchange=e=>{estado.ajustes.letra=Number(e.target.value);document.documentElement.style.setProperty('--escala',estado.ajustes.letra);guardar();dibujarCuadricula()}}
+function iniciarNivel(){nivel=generarNivel(estado.nivel);seleccion=[];arrastrando=false;modoMartillo=false;terminado=false;estado.reveladas=estado.reveladas.filter(p=>nivel.cuadricula.palabras.some(x=>x.texto===p));estado.extraNivel=estado.extraNivel.filter(p=>nivel.palabrasExtra.includes(p));estado.pistas=estado.pistas.filter(clave=>mapaLetras().has(clave));mostrarPaisaje();actualizarCabecera();dibujarRueda();requestAnimationFrame(dibujarCuadricula);avisar('Conecta las letras para revelar las palabras ocultas.');guardar()}
+$('rueda').addEventListener('pointerdown',iniciarArrastre);$('rueda').addEventListener('pointermove',moverArrastre);$('rueda').addEventListener('pointerup',finalizarArrastre);$('rueda').addEventListener('pointercancel',finalizarArrastre);$('rueda').addEventListener('lostpointercapture',()=>{if(arrastrando){arrastrando=false;seleccion=[];dibujarRueda()}});
+$('formularioPalabra').addEventListener('submit',e=>{e.preventDefault();evaluar($('entrada').value)});
+$('mezclar').addEventListener('click',()=>{if(terminado)return;const azar=Math.random;const anterior=nivel.letras;for(let i=0;i<8;i++){nivel.letras=mezclarLista([...nivel.letras],azar).join('');if(nivel.letras!==anterior)break}seleccion=[];dibujarRueda();avisar('Letras mezcladas. ¡Una nueva perspectiva!')});
+$('reiniciarCrucigrama').addEventListener('click',reiniciarCrucigrama);$('pista').addEventListener('click',revelarPista);$('martillo').addEventListener('click',iniciarMartillo);$('regalo').addEventListener('click',regaloDiario);$('gemas').addEventListener('click',regaloDiario);$('galeria').addEventListener('click',abrirGaleria);$('ajustes').addEventListener('click',abrirAjustes);$('cerrarModal').addEventListener('click',cerrarModal);$('modal').addEventListener('click',e=>{if(e.target===$('modal'))cerrarModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')cerrarModal()});
+window.addEventListener('resize',()=>{if(nivel)dibujarCuadricula()});document.documentElement.style.setProperty('--escala',estado.ajustes.letra||1);
+/* Funciones locales de comprobación, sin alterar el juego. */
+window.RutaDeLetras={generarNivel,cargarDiccionario,normalizar,comprobar:()=>({palabras:DICCIONARIO.length,nivel:nivel.id,ancla:nivel.letras,objetivos:nivel.cuadricula.palabras.map(p=>p.texto),extras:nivel.palabrasExtra.length})};
+iniciarNivel();
+</script>
+</body>
+</html>
